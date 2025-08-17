@@ -140,3 +140,43 @@ This version is the same as [`DinD with a sidecar`](#dind-with-a-sidecar) except
 emulation support removed. **This does not make it any more secure.** But, you can use this version if you do not
 need platform emulation support and your host lacks support for [Sysbox](https://github.com/nestybox/sysbox),
 or you don't want to install it.
+
+### [`DinD with host Docker`](docker-compose.host-docker.yml)
+
+**This version is insecure. Containers have direct access to the host Docker daemon and filesystem.**
+
+This version directly mounts the host's Docker socket into the runner container. It's the simplest approach
+but provides no isolation. Use only in trusted environments where you control all Actions that will run.
+
+To use this version, ensure the `DOCKER_GID` environment variable matches your host's Docker group ID:
+```sh
+export DOCKER_GID=$(getent group docker | cut -d: -f3)
+docker compose -f docker-compose.host-docker.yml up -d
+```
+
+## Testing Docker-in-Docker
+
+A comprehensive test suite is provided to validate DinD functionality:
+
+```sh
+# Test the sidecar approach (recommended)
+./test-dind.sh sidecar
+
+# Test the simpler sidecar approach (no platform emulation)
+./test-dind.sh sidecar-nope
+
+# Test the Sysbox approach
+./test-dind.sh sysbox
+
+# Test the host Docker approach
+./test-dind.sh host
+```
+
+The test script validates:
+- Basic Docker commands (`version`, `info`, `run`)
+- Docker build functionality
+- Platform emulation (where supported)
+- Container cleanup
+
+You can also use the provided GitHub Actions workflow example (`.github-workflows-test-dind.yml`) to test
+DinD functionality within actual GitHub Actions.

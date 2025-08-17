@@ -25,8 +25,23 @@ unset ACCESS_TOKEN
 unset REPOSITORY
 
 if [ -n ${DOCKER_SYSBOX_RUNTIME} ]; then
+    echo "Starting dockerd for Sysbox runtime..."
     sudo rm -f /home/github/dockerd.pid
     sudo nohup /usr/bin/dockerd --pidfile /home/github/dockerd.pid >/dev/null 2>&1 < /dev/null &
+    
+    # Wait for dockerd to be ready
+    echo "Waiting for dockerd to become ready..."
+    for i in {1..30}; do
+        if docker version >/dev/null 2>&1; then
+            echo "Docker daemon is ready!"
+            break
+        fi
+        if [ $i -eq 30 ]; then
+            echo "Docker daemon failed to start after 30 seconds"
+            exit 1
+        fi
+        sleep 1
+    done
 fi
 
 ./run.sh & wait $!

@@ -1,0 +1,17 @@
+services:
+  gha-runner:
+    image: ghcr.io/kevmo314/docker-gha-runner:main
+    restart: always
+    env_file:
+      - container-vars.env
+    volumes:
+      # Mount host Docker socket - this is the insecure but simple approach
+      - /var/run/docker.sock:/var/run/docker.sock
+      # If you want to use a different docker group ID, set DOCKER_GID env var
+    environment:
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    user: github
+    group_add:
+      # Add the docker group - you may need to adjust the GID to match your host
+      # Use `getent group docker` on your host to find the correct GID
+      - "${DOCKER_GID:-999}"
