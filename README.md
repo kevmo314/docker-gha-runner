@@ -24,12 +24,33 @@ party service to use what resources you already have available.
 
 ## Usage with Docker
 
+### Parameters
 Bring up the container, setting `ACCESS_TOKEN` and `REPOSITORY`.
 
-`REPOSITORY` is the organization and repository name only, for example `-e REPOSITORY=kevmo314/docker-gha-runner`.
+**`REPOSITORY` is the organization and repository name only.** <br>
+
+**`ACCESS_TOKEN` is a personal access token generated in your GitHub settings.** <br>
+
+**`IS_ORG` is a boolean that is set to false by default, change if the runner is for an entire organization (Uses a different API Endpoint).** <br>
+
+### Parameters - Examples
 
 ```sh
-docker run -e REPOSITORY=... -e ACCESS_TOKEN=... -d --rm --restart always ghcr.io/kevmo314/docker-gha-runner:main
+REPOSITORY=kevmo314/docker-gha-runner
+```
+
+```sh
+ACCESS_TOKEN=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
+```
+
+```sh
+IS_ORG=true
+```
+
+### Full command
+
+```sh
+docker run -e REPOSITORY=[repo url] -e ACCESS_TOKEN=[personal token] -d --restart always ghcr.io/kevmo314/docker-gha-runner:main
 ```
 
 Once it's running, check out your runners page:
