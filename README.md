@@ -26,6 +26,8 @@ party service to use what resources you already have available.
 
 Bring up the container, setting `ACCESS_TOKEN` and `REPOSITORY`.
 
+`REPOSITORY` is the organization and repository name only, for example `-e REPOSITORY=kevmo314/docker-gha-runner`.
+
 ```sh
 docker run -e REPOSITORY=... -e ACCESS_TOKEN=... -d --rm --restart always ghcr.io/kevmo314/docker-gha-runner:main
 ```
