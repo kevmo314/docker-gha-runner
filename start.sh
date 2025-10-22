@@ -1,12 +1,10 @@
 #!/bin/bash
 
-if [ "$IS_ORG" = true ] ; then
+if [[ "$REPOSITORY" != *"/"* ]]; then
   REPO_TYPE="orgs"
 else
   REPO_TYPE="repos"
 fi
-
-echo "$REPO_TYPE"
 
 REG_TOKEN=$(curl -fsS -X POST -H "Authorization: token ${ACCESS_TOKEN}" -H "Accept: application/vnd.github+json" https://api.github.com/${REPO_TYPE}/${REPOSITORY}/actions/runners/registration-token | jq .token --raw-output)
 

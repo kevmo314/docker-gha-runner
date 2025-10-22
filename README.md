@@ -24,12 +24,38 @@ party service to use what resources you already have available.
 
 ## Usage with Docker
 
+### Parameters
 Bring up the container, setting `ACCESS_TOKEN` and `REPOSITORY`.
 
-`REPOSITORY` is the organization and repository name only, for example `-e REPOSITORY=kevmo314/docker-gha-runner`.
+**`REPOSITORY` is the organization and repository name only.** <br>
+
+**`ACCESS_TOKEN` is a personal access token generated in your GitHub settings (Classic).** <br>
+
+### Parameters - Examples
+
+##### Repository
 
 ```sh
-docker run -e REPOSITORY=... -e ACCESS_TOKEN=... -d --rm --restart always ghcr.io/kevmo314/docker-gha-runner:main
+# For repositories:
+REPOSITORY=kevmo314/docker-gha-runner
+```
+
+```sh
+# For organizations:
+REPOSITORY=RedHatOfficial
+```
+
+##### Authentication
+
+```sh
+# Personal access token (Classic):
+ACCESS_TOKEN=ghp_11AY2IQII0BOo6tbQspNJv_WJWjQ09kLe7nxZyWza09cFDKq2sCPRuibdPR5o1VGxXLCLT3ES4ETwYxwLG
+```
+
+### Full command
+
+```sh
+docker run -e REPOSITORY=[repo url] -e ACCESS_TOKEN=[personal token] -d --restart always ghcr.io/kevmo314/docker-gha-runner:main
 ```
 
 Once it's running, check out your runners page:
@@ -92,7 +118,9 @@ services:
     environment:
       REPOSITORY: <the repository you wish to link to>
       ACCESS_TOKEN: <github access token>
-  runner_arm64:
+  runner_arm
+<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
+64:
     image: ghcr.io/kevmo314/docker-gha-runner:main
     platform: linux/arm64
     restart: always
