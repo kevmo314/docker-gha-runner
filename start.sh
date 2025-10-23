@@ -1,6 +1,12 @@
 #!/bin/bash
 
-REG_TOKEN=$(curl -fsS -X POST -H "Authorization: token ${ACCESS_TOKEN}" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${REPOSITORY}/actions/runners/registration-token | jq .token --raw-output)
+if [[ "$REPOSITORY" != *"/"* ]]; then
+  REPO_TYPE="orgs"
+else
+  REPO_TYPE="repos"
+fi
+
+REG_TOKEN=$(curl -fsS -X POST -H "Authorization: token ${ACCESS_TOKEN}" -H "Accept: application/vnd.github+json" https://api.github.com/${REPO_TYPE}/${REPOSITORY}/actions/runners/registration-token | jq .token --raw-output)
 
 echo "Using registration token $REG_TOKEN"
 
