@@ -16,6 +16,9 @@ cleanup() {
     echo "Removing runner..."
     ./config.sh remove --token $REG_TOKEN
     rm -rf ./_work/*
+    # /tmp is not under _work but many tools (buildx, setup-*, pip/npm, mktemp) write here.
+    # Without this, /tmp grows unbounded across container restarts since the writable layer persists.
+    sudo rm -rf /tmp/* /tmp/.[!.]* 2>/dev/null || true
     if [ -n ${DOCKER_SYSBOX_RUNTIME} ]; then
         sudo pkill --pidfile /home/github/dockerd.pid
     fi
