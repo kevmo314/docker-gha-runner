@@ -19,8 +19,8 @@ cleanup() {
     # /tmp is not under _work but many tools (buildx, setup-*, pip/npm, mktemp) write here.
     # Without this, /tmp grows unbounded across container restarts since the writable layer persists.
     sudo rm -rf /tmp/* /tmp/.[!.]* 2>/dev/null || true
-    if [ -n ${DOCKER_SYSBOX_RUNTIME} ]; then
-        sudo pkill --pidfile /home/github/dockerd.pid
+    if [[ -n "${DOCKER_SYSBOX_RUNTIME:-}" ]]; then
+        sudo pkill --pidfile /home/runner/dockerd.pid
     fi
     echo "Exiting..."
     exit 1
@@ -33,9 +33,9 @@ trap 'cleanup' HUP QUIT ABRT EXIT
 unset ACCESS_TOKEN
 unset REPOSITORY
 
-if [ -n ${DOCKER_SYSBOX_RUNTIME} ]; then
-    sudo rm -f /home/github/dockerd.pid
-    sudo nohup /usr/bin/dockerd --pidfile /home/github/dockerd.pid >/dev/null 2>&1 < /dev/null &
+if [[ -n "${DOCKER_SYSBOX_RUNTIME:-}" ]]; then
+    sudo rm -f /home/runner/dockerd.pid
+    sudo nohup /usr/bin/dockerd --pidfile /home/runner/dockerd.pid >/dev/null 2>&1 < /dev/null &
 fi
 
 ./run.sh & wait $!
