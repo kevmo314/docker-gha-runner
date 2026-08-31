@@ -10,7 +10,7 @@ services:
       # If you want to use a different docker group ID, set DOCKER_GID env var
     environment:
       - DOCKER_HOST=unix:///var/run/docker.sock
-    user: github
+    user: runner
     group_add:
       # Add the docker group - you may need to adjust the GID to match your host
       # Use `getent group docker` on your host to find the correct GID

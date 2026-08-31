@@ -2,6 +2,11 @@
 
 A dead-simple way to add GitHub Actions Runners to your account.
 
+The container extends GitHub's official Linux runner image,
+[`ghcr.io/actions/actions-runner`](https://github.com/actions/runner/pkgs/container/actions-runner), so the runner
+binary and its runtime dependencies come directly from GitHub. Builds use the official `latest` tag by default;
+pass `--build-arg VERSION=<runner version>` to pin a release.
+
 ## Motivation
 
 I kept getting annoyed by how the GitHub Actions runner script is sort of stateful and has access to the surrounding environment.
