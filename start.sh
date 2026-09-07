@@ -10,12 +10,17 @@ REG_TOKEN=$(curl -fsS -X POST -H "Authorization: token ${ACCESS_TOKEN}" -H "Acce
 
 echo "Using registration token $REG_TOKEN"
 
-./config.sh --url https://github.com/${REPOSITORY} --token $REG_TOKEN --ephemeral --unattended
+# RUNNER_WORKDIR lets the work directory be a host path bind-mounted at the
+# same path inside the container, so jobs can bind-mount workspace paths into
+# sibling containers on the host Docker daemon.
+RUNNER_WORKDIR="${RUNNER_WORKDIR:-_work}"
+
+./config.sh --url https://github.com/${REPOSITORY} --token $REG_TOKEN --ephemeral --unattended --work "$RUNNER_WORKDIR"
 
 cleanup() {
     echo "Removing runner..."
     ./config.sh remove --token $REG_TOKEN
-    rm -rf ./_work/*
+    rm -rf "$RUNNER_WORKDIR"/*
     # /tmp is not under _work but many tools (buildx, setup-*, pip/npm, mktemp) write here.
     # Without this, /tmp grows unbounded across container restarts since the writable layer persists.
     sudo rm -rf /tmp/* /tmp/.[!.]* 2>/dev/null || true
