@@ -36,6 +36,12 @@ Bring up the container, setting `ACCESS_TOKEN` and `REPOSITORY`.
 
 **`ACCESS_TOKEN` is a personal access token generated in your GitHub settings (Classic).** <br>
 
+**`RUNNER_WORKDIR` (optional) is the runner work directory, default `_work`.** Set it to an absolute path and
+bind-mount the same host path there (for example `-e RUNNER_WORKDIR=/srv/gha/runner-1/_work -v /srv/gha/runner-1/_work:/srv/gha/runner-1/_work`)
+when jobs need to bind-mount workspace paths into sibling containers: the host Docker daemon only sees host
+paths, so `$GITHUB_WORKSPACE` has to exist at the same path on both sides. The host directory must be writable
+by uid 1001.
+
 ### Parameters - Examples
 
 ##### Repository
