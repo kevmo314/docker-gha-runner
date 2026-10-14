@@ -24,6 +24,21 @@ cleanup() {
     # /tmp is not under _work but many tools (buildx, setup-*, pip/npm, mktemp) write here.
     # Without this, /tmp grows unbounded across container restarts since the writable layer persists.
     sudo rm -rf /tmp/* /tmp/.[!.]* 2>/dev/null || true
+    # The same applies to the home directory: setup-go, Gradle, the Android SDK and
+    # npm cache gigabytes there. Keep only what the image itself shipped.
+    if [[ -f /etc/runner-home-manifest ]]; then
+        for entry in /home/runner/* /home/runner/.[!.]*; do
+            [[ -e "$entry" ]] || continue
+            grep -qxF "$(basename "$entry")" /etc/runner-home-manifest || sudo rm -rf "$entry"
+        done
+    fi
+    # docker/setup-buildx-action removes its BuildKit container and state volume in a
+    # post step, which never runs when a job is cancelled. Remove the ones no
+    # container uses; a concurrent job's builder is in use and docker refuses.
+    if docker info >/dev/null 2>&1; then
+        docker ps -aq --filter name=buildx_buildkit_ --filter status=exited | xargs -r docker rm -v >/dev/null 2>&1 || true
+        docker volume ls -q --filter name=buildx_buildkit_ | xargs -r -n1 docker volume rm >/dev/null 2>&1 || true
+    fi
     if [[ -n "${DOCKER_SYSBOX_RUNTIME:-}" ]]; then
         sudo pkill --pidfile /home/runner/dockerd.pid
     fi
