@@ -20,6 +20,10 @@ WORKDIR /home/runner
 
 COPY --chown=runner:runner --chmod=0755 ./start.sh ./start.sh
 
+# Record what the image ships in the home directory so cleanup can remove
+# everything jobs add there (toolchain caches like ~/.cache, ~/.gradle, ~/go).
+RUN ls -A /home/runner > /etc/runner-home-manifest
+
 USER runner
 
 CMD ["./start.sh"]
