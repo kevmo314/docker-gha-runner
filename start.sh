@@ -29,6 +29,9 @@ cleanup() {
     if [[ -f /etc/runner-home-manifest ]]; then
         for entry in /home/runner/* /home/runner/.[!.]*; do
             [[ -e "$entry" ]] || continue
+            # A runner self-update installs into bin.<version> and
+            # externals.<version> and repoints the bin and externals symlinks.
+            case "$(basename "$entry")" in bin.*|externals.*) continue ;; esac
             grep -qxF "$(basename "$entry")" /etc/runner-home-manifest || sudo rm -rf "$entry"
         done
     fi
